@@ -24,7 +24,7 @@ route.get ('/:id', function(req,res){
   var id = req.params.id
   dbAccess.posts.readOne(id)
   .then (function(post){
-    res.json(post)
+    res.json(post.rows)
   })
   .catch (function(err){
     console.log(err)
@@ -37,7 +37,7 @@ route.get ('/:id', function(req,res){
 route.get ('/', function(req, res){
   dbAccess.posts.readAll()
   .then (function(posts){
-    res.json(posts)
+    res.json(posts.rows)
   })
   .catch (function(err){
     console.log(err)
@@ -49,7 +49,8 @@ route.get ('/', function(req, res){
 
 route.put ('/:id', function(req, res){
   var id = req.params.id
-  dbAccess.posts.update(req.body.title, req.body.body, id)
+  var userId = req.body.userId || '0';
+  dbAccess.posts.update(req.body.title, req.body.body, id, userId)
   .then (function(){
     res.json ({
       success: true
@@ -63,9 +64,10 @@ route.put ('/:id', function(req, res){
   })
 })
 
-route.delete ('/:id', function(req, res){
-  var id = req.params.id
-  dbAccess.post.delete(id)
+route['delete']('/:id', function(req, res){
+  var id = req.params.id;
+  var userId = req.body.userId;
+  dbAccess.posts['delete'](id, userId)
   .then (function(){
     res.json ({
       success: true

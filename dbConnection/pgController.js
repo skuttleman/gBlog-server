@@ -37,21 +37,40 @@ module.exports = {
       var sql = 'SELECT * FROM posts;';
       return runSQL(sql);
     },
-    update: function(title, body, id){
-      var promises = []
-      if (title) {
-        var sql = 'UPDATE posts SET title = $1 WHERE id = $2;';
-        promises.push(runSQL(sql, [title, id]));
-      }
-      if (body) {
-        sql = 'UPDATE posts SET body = $1 WHERE id = $2;';
-        promises.push(runSQL(sql, [body, id]));
-      }
-      return Promise.all(promises);
+    update: function(title, body, id, userId){
+      return runSQL('SELECT * FROM posts WHERE id=$1', [id])
+      .then(function(post) {
+        if (post.rows[0].user_id == userId) {
+          var promises = []
+          if (title) {
+            var sql = 'UPDATE posts SET title = $1 WHERE id = $2;';
+            promises.push(runSQL(sql, [title, id]));
+          }
+          if (body) {
+            sql = 'UPDATE posts SET body = $1 WHERE id = $2;';
+            promises.push(runSQL(sql, [body, id]));
+          }
+          return Promise.all(promises);
+        } else {
+          return Promise.reject('User Id does not match');
+        }
+      }).catch(function(err) {
+        return Promise.reject(err);
+      });
+
     },
-    delete: function(id){
-      var sql = 'DELETE FROM posts WHERE id = $1;'
-      return runSQL(sql, [id]);
+    'delete': function(id, userId){
+      return runSQL('SELECT * FROM posts WHERE id=$1', [id])
+      .then(function(post) {
+        if (post.rows[0].user_id == userId) {
+          var sql = 'DELETE FROM posts WHERE id = $1;'
+          return runSQL(sql, [id]);
+        }
+        else return Promise.reject('User Id does not match');
+      })
+      .catch(function(err) {
+        return Promise.reject(err);
+      });
     }
   }
 }
