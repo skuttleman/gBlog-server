@@ -6,7 +6,13 @@ var dbAccess = require('../dbConnection/pgController');
 
 
 //crud routes
-route.use('/:id/comments', comments(req.params.id));
+route.use('/:id', function(req, res, next) {
+  req.blogPostId = req.params.id;
+  next();
+})
+
+route.use('/:id/comments', comments());
+
 route.post ('/', function(req, res){
   dbAccess.posts.create(req.body.title, req.body.userId, req.body.body)
   .then (function(){

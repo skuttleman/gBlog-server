@@ -72,5 +72,55 @@ module.exports = {
         return Promise.reject(err);
       });
     }
+  },
+  comments: {
+    create: function(postId, userId, body) {
+      if (userId) {
+        var dateTime = new Date();
+        var sql = 'INSERT INTO comments (post_id, user_id, body, creation_time) values ' +
+        '($1, $2, $3, $4);';
+        return runSQL(sql, [postId, userId, body, dateTime]);
+      } else {
+        return Promise.reject('No User ID');
+      }
+
+    },
+    readOne: function(id) {
+      var sql = 'SELECT * FROM comments WHERE id = $1;';
+      return runSQL(sql, [id]);
+    },
+    readAll: function(postId) {
+      var sql = 'SELECT * FROM comments WHERE post_id = $1;';
+      return runSQL(sql, [postId]);
+    },
+    update: function(body, postId, userId) {
+      return runSQL('SELECT * FROM comments WHERE id = $1;', [postId])
+      .then(function(comment) {
+        if (userId == comment.rows[0].user_id) {
+          var sql = 'UPDATE comments SET body=$1 WHERE id=$2;';
+          return runSQL(sql, [body, postId]);
+        } else {
+          return Promise.reject('User Id does not match');
+        }
+      })
+      .catch(function(err) {
+        return Promise.reject(err);
+      })
+    },
+    'delete': function(id, userId) {
+      // console.log(id, userId);
+      return runSQL('SELECT * FROM comments WHERE id = $1', [id])
+      .then(function(comment) {
+        if (comment.rows[0].user_id == userId) {
+          var sql = 'DELETE FROM comments WHERE id = $1;';
+          return runSQL(sql, [id]);
+        } else {
+          return Promise.reject('User Id does not match');
+        }
+      })
+      .catch(function(err) {
+        return Promise.reject(err);
+      })
+    }
   }
 }
