@@ -1,5 +1,7 @@
 var express = require('express');
 var  app = express();
+var bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({extended: false}));
 
 var posts = require('./routes/posts');
 var comments = require('./routes/comments');
