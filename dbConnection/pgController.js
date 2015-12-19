@@ -30,11 +30,11 @@ module.exports = {
       return runSQL(sql, [title, userId, body, dateTime]);
     },
     readOne: function(id){
-      var sql = 'SELECT * FROM posts WHERE id = $1;';
+      var sql = 'SELECT * FROM posts WHERE id = $1 ORDER BY creation_time DESC;';
       return runSQL(sql, [id]);
     },
     readAll: function(){
-      var sql = 'SELECT * FROM posts;';
+      var sql = 'SELECT * FROM posts ORDER BY creation_time DESC;';
       return runSQL(sql);
     },
     update: function(title, body, id, userId){
@@ -86,11 +86,11 @@ module.exports = {
 
     },
     readOne: function(id) {
-      var sql = 'SELECT * FROM comments WHERE id = $1;';
+      var sql = 'SELECT * FROM comments WHERE id = $1 ORDER BY creation_time DESC;';
       return runSQL(sql, [id]);
     },
     readAll: function(postId) {
-      var sql = 'SELECT * FROM comments WHERE post_id = $1;';
+      var sql = 'SELECT * FROM comments WHERE post_id = $1 ORDER BY creation_time DESC;';
       return runSQL(sql, [postId]);
     },
     update: function(body, postId, userId) {
