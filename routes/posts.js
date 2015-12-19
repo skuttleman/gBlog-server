@@ -1,10 +1,12 @@
 var express = require('express');
 var route = express.Router();
+var comments = require('./comments')
 module.exports = route;
 var dbAccess = require('../dbConnection/pgController');
 
 
 //crud routes
+route.use('/:id/comments', comments(req.params.id));
 route.post ('/', function(req, res){
   dbAccess.posts.create(req.body.title, req.body.userId, req.body.body)
   .then (function(){

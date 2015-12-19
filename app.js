@@ -4,10 +4,8 @@ var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended: false}));
 
 var posts = require('./routes/posts');
-var comments = require('./routes/comments');
 
 app.use('/posts', posts);
-app.use('/comments', comments);
 
 
 
